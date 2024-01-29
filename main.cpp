@@ -24,6 +24,7 @@ void remove(Node* &head, Node* current, Node* prev, int deleteID);
 void average(Node* current, int counter, float sum);
 //main
 int main(){
+  vector<student*> students;
   Node* head = NULL;
   bool stillRunning = true;
   //while loop where code runs
@@ -85,50 +86,35 @@ int main(){
 }
 
 //add function
-void add(Node* &head, Node* current, Node* prev, int Id, float GPA, char first[30], char last[30]){
+void add(Node* &head, Node* current, Node* prev, int Id, float GPA, char first[30], char last[30], int size, Node* &hash[]){
   //creating the new student and setting its values
   student* newstudent = new student();
- 
-  newstudent->setId(Id);
-   
+
+  newstudent->setID(Id);
+
   strcpy(newstudent->first, first);
-  
   strcpy(newstudent->last, last);
+
   newstudent->setGPA(GPA);
 
-  //if there is nothing in the list, set the beginning of the list to the new student.
-  if(head == NULL){
-    head = new Node();
-    head->setStudent(newstudent);
-  }
-  else{
-    //create a temporary node that holds the student.
-    Node* tempNode = new Node();
-    tempNode->setStudent(newstudent);
-    //if the ID is less than that of the head, the new node becomes the head.
-    if(Id < head->getStudent()->getId()){
-      Node* newTemp = head;
-      head = tempNode;
-      head->setNext(newTemp);
-    }
-    //if current is past the last node in the list, the current node becomes the new node.
-    else if(current == NULL){
-      current = tempNode;
-      prev->setNext(current);
-    }
-    //if the ID is between the last node and the current node, then the node is added between them.
-    else if(prev->getStudent()->getId() < Id && current->getStudent()->getId() > Id){
-      prev->setNext(tempNode);
-      tempNode->setNext(current);
-    }
-    //if none of that is true, call add again.
-    else{
-      add(head, current->getNext(), current, Id, GPA, first, last);
-    }
-    return;
-  }
+  student.push_back(newstudent);
+  
+
+
   return;
 }
+void hash(int oldsize, int currentsize, Node* &hash[], vector <student*> students){
+  Node newHash [currentsize];
+  hash = newHash;
+
+  
+
+  
+  
+  
+
+}
+
 //remove function
 void remove(Node* &head, Node* current, Node* prev, int deleteID){
   //if there's nothing in the list, return
