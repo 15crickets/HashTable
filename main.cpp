@@ -102,10 +102,9 @@ void add(int Id, float GPA, char first[30], char last[30], int size, Node** &has
   student* newstudent = new student();
 
   newstudent->setId(Id);
-
   strcpy(newstudent->first, first);
   strcpy(newstudent->last, last);
-
+  
   newstudent->setGPA(GPA);
 
   Node* tempNode = new Node();
@@ -114,15 +113,41 @@ void add(int Id, float GPA, char first[30], char last[30], int size, Node** &has
 
   int index = newstudent->getId() % size;
 
+  cout << "S" << endl;
+  if(hash[index] == NULL){
+    hash[index] = tempNode;
+  }
+  else if(hash[index]->getNext() == NULL){
+    cout << "Wassup" << endl;
+    hash[index]->setNext(tempNode);
+  }
+  else if(hash[index]->getNext()->getNext()==NULL){
+    cout << "Wssup2" << endl;
+    hash[index]->getNext()->setNext(tempNode);
+  }
+  else{
+    cout << "Easter" << endl;
+    hashFunction(size, size*2, hash);
+
+  }
+  cout << "Steph Curry" << endl;
+
+  /*
   if(hash[index]->getNext() == NULL || hash[index] == NULL || hash[index]->getNext()->getNext() == NULL){
     if(hash[index] == NULL){
+      cout << "t" << endl;
       hash[index] = tempNode;
+      cout << "e" << endl;
     }
     else if(hash[index]->getNext() == NULL){
+      cout << "t" << endl;
       hash[index]->getNext()->setNext(tempNode);
+      cout << "e" << endl;
     }
     else if(hash[index]->getNext()->getNext() == NULL){
+      cout << "t" << endl;
       hash[index]->getNext()->getNext()->setNext(tempNode);
+      cout << "e" << endl;
     }
 
     
@@ -131,6 +156,7 @@ void add(int Id, float GPA, char first[30], char last[30], int size, Node** &has
   else{
     hashFunction(size, size*2, hash);
   }
+  */
 
 
   return;
