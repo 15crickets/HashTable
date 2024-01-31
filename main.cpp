@@ -15,18 +15,27 @@ Citations: Node.h and Node.cpp files came from Ashvika. Also, I used this websit
 #include "Node.h"
 #include "student.h"
 #include <iomanip>
+#include <array>
 
+#include <vector>
 using namespace std;
 //function prototypes
-void add(Node* &head, Node* current, Node* prev, int Id, float GPA, char first[30], char last[30]);
+void add(int Id, float GPA, char first[30], char last[30], int size, Node** &hash);
 void display(Node* current);
 void remove(Node* &head, Node* current, Node* prev, int deleteID);
 void average(Node* current, int counter, float sum);
+void hashFunction(int oldsize, int currentsize, Node** &hash);
 //main
 int main(){
-  vector<student*> students;
+  vector<Node*> students;
   Node* head = NULL;
   bool stillRunning = true;
+
+  Node** hash = new Node* [100];
+  for(int i = 0; i < 100; i++){
+    hash[i] = NULL;
+    
+  }
   //while loop where code runs
   while (stillRunning == true){
     //prompt user to begin one of the functions
@@ -57,7 +66,9 @@ int main(){
       cin >> GPA;
       cin.get();
       //calling the add function
-      add(head, head, head, id, GPA, first, last);
+      int size = 100;
+      
+      add(id, GPA, first, last, size, hash);
 
     }
     if(strcmp(input, "PRINT") == 0){
@@ -86,32 +97,71 @@ int main(){
 }
 
 //add function
-void add(Node* &head, Node* current, Node* prev, int Id, float GPA, char first[30], char last[30], int size, Node* &hash[]){
+void add(int Id, float GPA, char first[30], char last[30], int size, Node** &hash){
   //creating the new student and setting its values
   student* newstudent = new student();
 
-  newstudent->setID(Id);
+  newstudent->setId(Id);
 
   strcpy(newstudent->first, first);
   strcpy(newstudent->last, last);
 
   newstudent->setGPA(GPA);
 
-  student.push_back(newstudent);
+  Node* tempNode = new Node();
+  tempNode->setStudent(newstudent);
   
+
+  int index = newstudent->getId() % size;
+
+  if(hash[index]->getNext() == NULL || hash[index] == NULL || hash[index]->getNext()->getNext() == NULL){
+    if(hash[index] == NULL){
+      hash[index] = tempNode;
+    }
+    else if(hash[index]->getNext() == NULL){
+      hash[index]->getNext()->setNext(tempNode);
+    }
+    else if(hash[index]->getNext()->getNext() == NULL){
+      hash[index]->getNext()->getNext()->setNext(tempNode);
+    }
+
+    
+  }
+  
+  else{
+    hashFunction(size, size*2, hash);
+  }
 
 
   return;
 }
-void hash(int oldsize, int currentsize, Node* &hash[], vector <student*> students){
-  Node newHash [currentsize];
+
+
+void hashFunction(int oldsize, int currentsize, Node** &hash){
+  Node** newHash = new Node* [currentsize];
+  for(int i = 0; i < currentsize; i++){
+    newHash[i] = NULL;
+  }
+
+  for(int i = 0; i < oldsize; i++){
+    Node* tempNode = hash[i];
+    while(tempNode!=NULL){
+      int index = tempNode->getStudent()->getId() % currentsize;
+      Node* finalNode = newHash[index];
+      while(finalNode != NULL){
+	finalNode = finalNode->getNext();
+      }
+      finalNode = tempNode;
+      tempNode = tempNode->getNext();
+      
+    }
+    
+  }
+
   hash = newHash;
 
-  
 
-  
-  
-  
+  return;
 
 }
 
