@@ -16,15 +16,18 @@ Citations: Node.h and Node.cpp files came from Ashvika. Also, I used this websit
 #include "student.h"
 #include <iomanip>
 #include <array>
-
+#include <fstream>
+#include <cstdlib>
+#include <time.h>
 #include <vector>
 using namespace std;
 //function prototypes
 void add(int Id, float GPA, char first[30], char last[30], int size, Node** &hash);
-void display(Node* current);
+void display(Node ** hash, int size);
 void remove(Node* &head, Node* current, Node* prev, int deleteID);
 void average(Node* current, int counter, float sum);
 void hashFunction(int oldsize, int currentsize, Node** &hash);
+void randomize(Node ** &hash, vector<char*> first, vector <char*> last, int size);
 //main
 int main(){
   vector<Node*> students;
@@ -36,6 +39,27 @@ int main(){
     hash[i] = NULL;
     
   }
+  vector<char*> firstNames;
+  vector<char*> lastNames;
+
+  fstream first_stream;
+  fstream second_stream;
+  second_stream.open("second.txt");
+  char temp[15];
+  first_stream.open("first.txt");
+  for(int i = 0; i < 20; i++){
+    first_stream.getline(temp, 15);
+    firstNames.push_back(temp);
+
+  }
+  for(int i = 0; i < 20; i++){
+    second_stream.getline(temp, 15);
+    lastNames.push_back(temp);
+    
+  }
+  randomize(hash, firstNames, lastNames, 100);
+  cout << "I BEEN STEPH CURRY WITH THE SHOT BEEN COOKING WITH THE SAUCE" << endl;
+  display(hash, 100);
   //while loop where code runs
   while (stillRunning == true){
     //prompt user to begin one of the functions
@@ -73,7 +97,7 @@ int main(){
     }
     if(strcmp(input, "PRINT") == 0){
       //calling the display function
-      display(head);
+      //display(head);
     }
     if(strcmp(input, "QUIT") == 0){
       //ending the while loop
@@ -191,6 +215,28 @@ void hashFunction(int oldsize, int currentsize, Node** &hash){
 
 }
 
+void randomize(Node ** &hash, vector<char*> first, vector <char*> last, int size){
+  srand(time(NULL));
+
+  int ID = 100000;
+  for(int i = 0; i < 500; i++){
+    int randNumFirst = rand()%20;
+    int randNumSecond = rand()%20;
+
+    float GPA = (rand()%(100-1+1) + 1)/25;
+    add(ID, GPA, first.at(randNumFirst), last.at(randNumSecond), size, hash);
+    ID++;
+
+
+  }
+  
+
+  return;
+  
+  
+
+}
+
 //remove function
 void remove(Node* &head, Node* current, Node* prev, int deleteID){
   //if there's nothing in the list, return
@@ -225,17 +271,27 @@ void remove(Node* &head, Node* current, Node* prev, int deleteID){
 }
 
 //display function
-void display(Node* current){
+void display(Node ** hash, int size){
   //if the current node doesn't exist, return.
-  if(current == NULL){
-    return;
-  }
-  //print out the information of the current student.
-  cout << current->getStudent()->first << " " << current->getStudent()->last;
-  cout << ", " << current->getStudent()->getId() << ", " << fixed << setprecision(2) << current->getStudent()->getGPA() << endl;
-  //progress to the next node and the next student.
-  if(current->getNext() != NULL){
-    display(current->getNext());
+  for(int i = 0; i < size; i++){
+    if(hash[i] != NULL){
+      cout << "Name: " << hash[i]->getStudent()->first << " " << hash[i]->getStudent()->last << endl;
+      cout << "ID: " << hash[i]->getStudent()->getId() << endl;
+      cout << "GPA: " << hash[i]->getStudent()->getGPA() << endl;
+      if(hash[i]->getNext() != NULL){
+	cout << "Name: " << hash[i]->getNext()->getStudent()->first << " " << hash[i]->getNext()->getStudent()->last << endl;
+	cout << "ID: " << hash[i]->getNext()->getStudent()->getId() << endl;
+	cout << "GPA: " << hash[i]->getNext()->getStudent()->getGPA() << endl;
+	    if(hash[i]->getNext()->getNext()!=NULL){
+	      cout << "Name: " << hash[i]->getNext()->getNext()->getStudent()->first << " " << hash[i]->getNext()->getNext()->getStudent()->last << endl;
+	      cout << "ID: " << hash[i]->getNext()->getNext()->getStudent()->getId() << endl;
+	      cout << "GPA: " << hash[i]->getNext()->getNext()->getStudent()->getGPA() << endl;
+	    }
+
+      }
+
+
+   }
   }
   return;
 
