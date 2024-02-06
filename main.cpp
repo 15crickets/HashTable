@@ -22,12 +22,12 @@ Citations: Node.h and Node.cpp files came from Ashvika. Also, I used this websit
 #include <vector>
 using namespace std;
 //function prototypes
-void add(int Id, float GPA, char first[30], char last[30], int size, Node** &hash);
-void display(Node ** hash, int size);
+void add(int Id, float GPA, char first[30], char last[30], int &size, Node** &hash);
+void display(Node ** hash, int &size);
 void remove(Node* &head, Node* current, Node* prev, int deleteID);
 void average(Node* current, int counter, float sum);
-void hashFunction(int oldsize, int currentsize, Node** &hash);
-void randomize(Node ** &hash, vector<char*> first, vector <char*> last, int size);
+void hashFunction(int &size, int currentsize, Node** &hash);
+void randomize(Node ** &hash, vector<char*> first, vector <char*> last, int &size);
 //main
 int main(){
   vector<Node*> students;
@@ -35,6 +35,7 @@ int main(){
   bool stillRunning = true;
 
   Node** hash = new Node* [100];
+  int size = 100;
   for(int i = 0; i < 100; i++){
     hash[i] = NULL;
     
@@ -44,33 +45,33 @@ int main(){
 
   fstream first_stream;
   fstream second_stream;
-  second_stream.open("second.txt");
 
   first_stream.open("first.txt");
   for(int i = 0; i < 20; i++){
-    char temp [15];
-    char secondTemp [15];
-    first_stream.getline(secondTemp, 15);
-    strcpy(temp, secondTemp);
-    cout << temp << endl;
+    char* temp = new char [15];
+    first_stream.getline(temp, 15);
     firstNames.push_back(temp);
 
   }
-  /*
+  first_stream.close();
+  second_stream.open("last.txt");
   for(int i = 0; i < 20; i++){
-    char temp [15];
-    char secondTemp[15];
-    second_stream.getline(secondTemp, 15);
-    strcpy(temp, secondTemp);
+    char* temp = new char[15];
+    second_stream.getline(temp, 15);
     lastNames.push_back(temp);
     
   }
-  */
+  
   for(vector <char*> :: iterator iter = firstNames.begin(); iter != firstNames.end(); iter++){
     cout << *iter << endl;
     
   }
-  //randomize(hash, firstNames, lastNames, 100);
+  for(vector <char*> :: iterator ite = lastNames.begin(); ite != lastNames.end(); ite++){
+    cout << *ite << endl;
+
+
+  }
+  randomize(hash, firstNames, lastNames, size);
   cout << "I BEEN STEPH CURRY WITH THE SHOT BEEN COOKING WITH THE SAUCE" << endl;
   /*
   display(hash, 100);
@@ -112,7 +113,7 @@ int main(){
     }
     if(strcmp(input, "PRINT") == 0){
       //calling the display function
-      //display(head);
+      display(hash, size);
     }
     if(strcmp(input, "QUIT") == 0){
       //ending the while loop
@@ -136,7 +137,7 @@ int main(){
 }
 
 //add function
-void add(int Id, float GPA, char first[30], char last[30], int size, Node** &hash){
+void add(int Id, float GPA, char first[30], char last[30], int &size, Node** &hash){
   //creating the new student and setting its values
   student* newstudent = new student();
 
@@ -152,20 +153,16 @@ void add(int Id, float GPA, char first[30], char last[30], int size, Node** &has
 
   int index = newstudent->getId() % size;
 
-  cout << "S" << endl;
   if(hash[index] == NULL){
     hash[index] = tempNode;
   }
   else if(hash[index]->getNext() == NULL){
-    cout << "Wassup" << endl;
     hash[index]->setNext(tempNode);
   }
   else if(hash[index]->getNext()->getNext()==NULL){
-    cout << "Wssup2" << endl;
     hash[index]->getNext()->setNext(tempNode);
   }
   else{
-    cout << "Easter" << endl;
     hashFunction(size, size*2, hash);
 
   }
@@ -201,13 +198,13 @@ void add(int Id, float GPA, char first[30], char last[30], int size, Node** &has
 }
 
 
-void hashFunction(int oldsize, int currentsize, Node** &hash){
+void hashFunction(int &size, int currentsize, Node** &hash){
   Node** newHash = new Node* [currentsize];
   for(int i = 0; i < currentsize; i++){
     newHash[i] = NULL;
   }
 
-  for(int i = 0; i < oldsize; i++){
+  for(int i = 0; i < size; i++){
     Node* tempNode = hash[i];
     while(tempNode!=NULL){
       int index = tempNode->getStudent()->getId() % currentsize;
@@ -223,13 +220,13 @@ void hashFunction(int oldsize, int currentsize, Node** &hash){
   }
 
   hash = newHash;
-
+  size = size * 2;
 
   return;
 
 }
 
-void randomize(Node ** &hash, vector<char*> first, vector <char*> last, int size){
+void randomize(Node ** &hash, vector<char*> first, vector <char*> last, int &size){
   srand(time(NULL));
 
   int ID = 100000;
@@ -238,8 +235,11 @@ void randomize(Node ** &hash, vector<char*> first, vector <char*> last, int size
     int randNumSecond = rand()%20;
 
     float GPA = (float) (rand()%(100-1+1) + 1)/25;
-    cout << first.at(randNumFirst) << endl;
-    cout << last.at(randNumSecond) << endl;
+    cout << "First name: " <<  first.at(randNumFirst) << endl;
+    cout << "Last name: " << last.at(randNumSecond) << endl;
+    cout << "GPA: " << GPA << endl;
+    cout << "ID: " << ID << endl;
+    cout << endl;
     add(ID, GPA, first.at(randNumFirst), last.at(randNumSecond), size, hash);
     ID++;
 
@@ -287,19 +287,23 @@ void remove(Node* &head, Node* current, Node* prev, int deleteID){
 }
 
 //display function
-void display(Node ** hash, int size){
+void display(Node ** hash, int &size){
+  cout << "HI" << endl;
   //if the current node doesn't exist, return.
   for(int i = 0; i < size; i++){
     if(hash[i] != NULL){
-      cout << "Name: " << hash[i]->getStudent()->first << " " << hash[i]->getStudent()->last << endl;
+      cout << "First name: " << hash[i]->getStudent()->first << endl;
+      cout << "Last name: " << hash[i]->getStudent()->last << endl;
       cout << "ID: " << hash[i]->getStudent()->getId() << endl;
       cout << "GPA: " << hash[i]->getStudent()->getGPA() << endl;
       if(hash[i]->getNext() != NULL){
-	cout << "Name: " << hash[i]->getNext()->getStudent()->first << " " << hash[i]->getNext()->getStudent()->last << endl;
+	cout << "First name: " << hash[i]->getNext()->getStudent()->first << endl;
+	cout << "Last name: " << hash[i]->getNext()->getStudent()->last << endl;
 	cout << "ID: " << hash[i]->getNext()->getStudent()->getId() << endl;
 	cout << "GPA: " << hash[i]->getNext()->getStudent()->getGPA() << endl;
 	    if(hash[i]->getNext()->getNext()!=NULL){
-	      cout << "Name: " << hash[i]->getNext()->getNext()->getStudent()->first << " " << hash[i]->getNext()->getNext()->getStudent()->last << endl;
+	      cout << "Name: " << hash[i]->getNext()->getNext()->getStudent()->first << endl;
+	      cout << "Last name: " << hash[i]->getNext()->getNext()->getStudent()->last << endl;
 	      cout << "ID: " << hash[i]->getNext()->getNext()->getStudent()->getId() << endl;
 	      cout << "GPA: " << hash[i]->getNext()->getNext()->getStudent()->getGPA() << endl;
 	    }
