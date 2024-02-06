@@ -45,22 +45,37 @@ int main(){
   fstream first_stream;
   fstream second_stream;
   second_stream.open("second.txt");
-  char temp[15];
+
   first_stream.open("first.txt");
   for(int i = 0; i < 20; i++){
-    first_stream.getline(temp, 15);
+    char temp [15];
+    char secondTemp [15];
+    first_stream.getline(secondTemp, 15);
+    strcpy(temp, secondTemp);
+    cout << temp << endl;
     firstNames.push_back(temp);
 
   }
+  /*
   for(int i = 0; i < 20; i++){
-    second_stream.getline(temp, 15);
+    char temp [15];
+    char secondTemp[15];
+    second_stream.getline(secondTemp, 15);
+    strcpy(temp, secondTemp);
     lastNames.push_back(temp);
     
   }
-  randomize(hash, firstNames, lastNames, 100);
+  */
+  for(vector <char*> :: iterator iter = firstNames.begin(); iter != firstNames.end(); iter++){
+    cout << *iter << endl;
+    
+  }
+  //randomize(hash, firstNames, lastNames, 100);
   cout << "I BEEN STEPH CURRY WITH THE SHOT BEEN COOKING WITH THE SAUCE" << endl;
+  /*
   display(hash, 100);
-  //while loop where code runs
+  */
+//while loop where code runs
   while (stillRunning == true){
     //prompt user to begin one of the functions
     cout << "Enter 'ADD', 'PRINT', 'DELETE', 'AVERAGE', or 'QUIT'" << endl;
@@ -154,7 +169,6 @@ void add(int Id, float GPA, char first[30], char last[30], int size, Node** &has
     hashFunction(size, size*2, hash);
 
   }
-  cout << "Steph Curry" << endl;
 
   /*
   if(hash[index]->getNext() == NULL || hash[index] == NULL || hash[index]->getNext()->getNext() == NULL){
@@ -223,7 +237,9 @@ void randomize(Node ** &hash, vector<char*> first, vector <char*> last, int size
     int randNumFirst = rand()%20;
     int randNumSecond = rand()%20;
 
-    float GPA = (rand()%(100-1+1) + 1)/25;
+    float GPA = (float) (rand()%(100-1+1) + 1)/25;
+    cout << first.at(randNumFirst) << endl;
+    cout << last.at(randNumSecond) << endl;
     add(ID, GPA, first.at(randNumFirst), last.at(randNumSecond), size, hash);
     ID++;
 
