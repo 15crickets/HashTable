@@ -199,39 +199,30 @@ void add(int Id, float GPA, char first[30], char last[30], int &size, Node** &ha
 
 
 void hashFunction(int &size, int currentsize, Node** &hash){
-  Node** newHash = new Node* [currentsize];
+  Node** newHash = new Node*[currentsize];
   for(int i = 0; i < currentsize; i++){
     newHash[i] = NULL;
+
   }
 
-  for(int i = 0; i < size; i++){
+  for(int i = 0;i < size; i++){
     Node* tempNode = hash[i];
-    int k = 0;
-    cout << "I: " << i << endl;
-    while(tempNode!=NULL){
-      //cout << tempNode->getStudent()->first << endl;
-      int index = tempNode->getStudent()->getId() % currentsize;
-      if(newHash[index] == NULL){
-	newHash[index] = tempNode;
-      }
-      else{
-	Node* finalNode = newHash[index];
-	while(finalNode != NULL){
-	  finalNode = finalNode->getNext();
-	}
-	finalNode = tempNode;
-	finalNode->setNext(NULL);
-
-      }
-      tempNode = tempNode->getNext();
-    
+    int index = tempNode->getStudent()->getId() % currentsize;
+    if(newHash[index] == NULL){
+      newHash[index] = tempNode;
+      newHash[index]->setNext(NULL;)
     }
-    
+    else{
+      Node* finalNode = newHash[index];
+      while(finalNode != NULL){
+	finalNode->getNext();
+      }
+      finalNode = tempNode;
+      finalNode->setNext(NULL);
+    }
+   
+
   }
-
-  hash = newHash;
-  size = size * 2;
-
   return;
 
 }
@@ -255,6 +246,7 @@ void randomize(Node ** &hash, vector<char*> first, vector <char*> last, int &siz
 
 
   }
+
   
 
   return;
