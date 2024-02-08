@@ -63,11 +63,11 @@ int main(){
   }
   
   for(vector <char*> :: iterator iter = firstNames.begin(); iter != firstNames.end(); iter++){
-    cout << *iter << endl;
+    //cout << *iter << endl;
     
   }
   for(vector <char*> :: iterator ite = lastNames.begin(); ite != lastNames.end(); ite++){
-    cout << *ite << endl;
+    //cout << *ite << endl;
 
 
   }
@@ -206,8 +206,10 @@ void hashFunction(int &size, int currentsize, Node** &hash){
 
   for(int i = 0; i < size; i++){
     Node* tempNode = hash[i];
+    int k = 0;
+    cout << "I: " << i << endl;
     while(tempNode!=NULL){
-      cout << tempNode->getStudent()->first << endl;
+      //cout << tempNode->getStudent()->first << endl;
       int index = tempNode->getStudent()->getId() % currentsize;
       if(newHash[index] == NULL){
 	newHash[index] = tempNode;
@@ -299,17 +301,20 @@ void display(Node ** hash, int &size){
   cout << "HI" << endl;
   //if the current node doesn't exist, return.
   for(int i = 0; i < size; i++){
+    cout << "I: " << i << endl;
     if(hash[i] != NULL){
       cout << "First name: " << hash[i]->getStudent()->first << endl;
       cout << "Last name: " << hash[i]->getStudent()->last << endl;
       cout << "ID: " << hash[i]->getStudent()->getId() << endl;
       cout << "GPA: " << hash[i]->getStudent()->getGPA() << endl;
       if(hash[i]->getNext() != NULL){
+	cout << "WE HAVE ENTERED THE TWILIGHT ZONE" << endl;
 	cout << "First name: " << hash[i]->getNext()->getStudent()->first << endl;
 	cout << "Last name: " << hash[i]->getNext()->getStudent()->last << endl;
 	cout << "ID: " << hash[i]->getNext()->getStudent()->getId() << endl;
 	cout << "GPA: " << hash[i]->getNext()->getStudent()->getGPA() << endl;
 	    if(hash[i]->getNext()->getNext()!=NULL){
+	      cout << "KLAY THOMPSON IS HITTING THREES THIS IS NOT A DRILL" << endl;
 	      cout << "Name: " << hash[i]->getNext()->getNext()->getStudent()->first << endl;
 	      cout << "Last name: " << hash[i]->getNext()->getNext()->getStudent()->last << endl;
 	      cout << "ID: " << hash[i]->getNext()->getNext()->getStudent()->getId() << endl;
