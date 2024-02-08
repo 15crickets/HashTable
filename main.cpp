@@ -207,14 +207,22 @@ void hashFunction(int &size, int currentsize, Node** &hash){
   for(int i = 0; i < size; i++){
     Node* tempNode = hash[i];
     while(tempNode!=NULL){
+      cout << tempNode->getStudent()->first << endl;
       int index = tempNode->getStudent()->getId() % currentsize;
-      Node* finalNode = newHash[index];
-      while(finalNode != NULL){
-	finalNode = finalNode->getNext();
+      if(newHash[index] == NULL){
+	newHash[index] = tempNode;
       }
-      finalNode = tempNode;
+      else{
+	Node* finalNode = newHash[index];
+	while(finalNode != NULL){
+	  finalNode = finalNode->getNext();
+	}
+	finalNode = tempNode;
+	finalNode->setNext(NULL);
+
+      }
       tempNode = tempNode->getNext();
-      
+    
     }
     
   }
