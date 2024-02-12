@@ -22,6 +22,7 @@ Citations: Node.h and Node.cpp files came from Ashvika. Also, I used this websit
 #include <vector>
 using namespace std;
 //function prototypes
+void rehashMechanics(Node* tempNode, Node ** &hash, Node ** & newHash, int index, bool rehash);
 void add(int Id, float GPA, char first[30], char last[30], int &size, Node** &hash);
 void display(Node ** hash, int &size);
 void remove(Node* &head, Node* current, Node* prev, int deleteID);
@@ -71,6 +72,21 @@ int main(){
 
 
   }
+  /*
+  Node* firstNode = new Node();
+  Node* secondNode = new Node();
+  student* firstStudent = new student();
+  student* secondStudent = new student();
+  firstStudent->setId(1);
+  secondStudent->setId(2);
+  firstNode->setStudent(firstStudent);
+  secondNode->setStudent(secondStudent);
+  firstNode->setNext(secondNode);
+  Node* thirdNode = firstNode->getNext();
+  firstNode->setNext(NULL);
+  cout << secondNode->getStudent()->getId() << endl;
+  cout << thirdNode->getStudent()->getId() << endl;
+  */
   randomize(hash, firstNames, lastNames, size);
   cout << "I BEEN STEPH CURRY WITH THE SHOT BEEN COOKING WITH THE SAUCE" << endl;
   /*
@@ -79,6 +95,7 @@ int main(){
 //while loop where code runs
   while (stillRunning == true){
     //prompt user to begin one of the functions
+    cout << size << endl;
     cout << "Enter 'ADD', 'PRINT', 'DELETE', 'AVERAGE', or 'QUIT'" << endl;
     char input[15];
     for(int i = 0; i < 7; i++){
@@ -163,6 +180,7 @@ void add(int Id, float GPA, char first[30], char last[30], int &size, Node** &ha
     hash[index]->getNext()->setNext(tempNode);
   }
   else{
+    hash[index]->getNext()->getNext()->setNext(tempNode);
     hashFunction(size, size*2, hash);
 
   }
@@ -199,12 +217,14 @@ void add(int Id, float GPA, char first[30], char last[30], int &size, Node** &ha
 
 
 void hashFunction(int &size, int currentsize, Node** &hash){
+  bool rehash = false;
   Node** newHash = new Node*[currentsize];
   for(int i = 0; i < currentsize; i++){
     newHash[i] = NULL;
 
   }
 
+/*
   for(int i = 0;i < size; i++){
     Node* tempNode = hash[i];
     int index = tempNode->getStudent()->getId() % currentsize;
@@ -223,15 +243,105 @@ void hashFunction(int &size, int currentsize, Node** &hash){
    
 
   }
+  */
+
+  for(int i = 0; i < size; i++){
+    cout << "I: " << i << endl;
+    Node* tempNode = hash[i];
+    Node* secondTempNode = NULL;
+    Node* thirdTempNode = NULL;
+    Node* fourthTempNode = NULL;
+    if(tempNode->getNext() != NULL){
+      secondTempNode = tempNode->getNext();
+      if(tempNode->getNext()->getNext() != NULL){
+        thirdTempNode = tempNode->getNext()->getNext();
+        if(tempNode->getNext()->getNext()->getNext() != NULL){
+          fourthTempNode = tempNode->getNext()->getNext()->getNext();
+        }
+      }
+    }
+
+    cout << "IDLMAO: " << tempNode->getStudent()->getId() << endl;
+    int index;
+    if(fourthTempNode != NULL){
+      cout << "4" << endl;
+      index = fourthTempNode->getStudent()->getId() % currentsize;
+      rehashMechanics(fourthTempNode, hash, newHash, index, rehash);
+      tempNode->getNext()->getNext()->setNext(NULL);
+    }
+    if(thirdTempNode != NULL){
+      cout << "3" << endl;
+      index = thirdTempNode->getStudent()->getId() % currentsize;
+      rehashMechanics(thirdTempNode, hash, newHash, index, rehash);
+      tempNode->getNext()->setNext(NULL);
+    }
+    if(secondTempNode != NULL){
+      cout << "2" << endl;
+      index = secondTempNode->getStudent()->getId() % currentsize;
+      rehashMechanics(secondTempNode, hash, newHash, index, rehash);
+      tempNode->setNext(NULL);
+    }
+    if(tempNode != NULL){
+      cout << "1" << endl;
+      index = tempNode->getStudent()->getId() % currentsize;
+      rehashMechanics(tempNode, hash, newHash, index, rehash);
+    }
+    /*
+    if(tempNode != NULL){
+      index = tempNode->getStudent()->getId() % currentsize;
+      rehashMechanics(tempNode, hash, newHash, index, rehash);
+      if(tempNode->getNext()!= NULL){
+        index = tempNode->getNext()->getStudent()->getId() % currentsize;
+        rehashMechanics(tempNode->getNext(), hash, newHash, index, rehash);
+        if(tempNode->getNext()->getNext() != NULL){ 
+          index = tempNode->getNext()->getNext()->getStudent()->getId() % currentsize;
+          rehashMechanics(tempNode->getNext()->getNext(), hash, newHash, index, rehash);
+          if(tempNode->getNext()->getNext()->getNext() != NULL){
+            index = tempNode->getNext()->getNext()->getNext()->getStudent()->getId() % currentsize;
+            rehashMechanics(tempNode->getNext()->getNext()->getNext(), hash, newHash, index, rehash);
+          }
+          tempNode->getNext()->getNext()->setNext(NULL);
+        }
+        tempNode->getNext()->setNext(NULL);
+        
+
+      }
+      tempNode->setNext(NULL);
+    }
+    */
+    
+
+  }
+  size = size * 2;
+  hash = newHash;
   return;
 
 }
 
+void rehashMechanics(Node* tempNode, Node ** &hash, Node ** & newHash, int index, bool rehash){
+  int iterator = 0;
+  if(newHash[index] == NULL){
+    newHash[index] = tempNode;
+  }
+  else{
+    Node* finalNode = newHash[index];
+    while(finalNode->getNext() != NULL){
+      cout << "HI" << endl;
+      cout << finalNode->getStudent()->getId() << endl;
+      finalNode = finalNode->getNext();
+    }
+    finalNode->setNext(tempNode);
+    cout << finalNode->getStudent()->getId();
+  }
+  cout << tempNode->getStudent()->getId() << " " << index << endl;
+
+
+}
 void randomize(Node ** &hash, vector<char*> first, vector <char*> last, int &size){
   srand(time(NULL));
 
   int ID = 100000;
-  for(int i = 0; i < 500; i++){
+  for(int i = 0; i < 1000; i++){
     int randNumFirst = rand()%20;
     int randNumSecond = rand()%20;
 
@@ -300,18 +410,18 @@ void display(Node ** hash, int &size){
       cout << "ID: " << hash[i]->getStudent()->getId() << endl;
       cout << "GPA: " << hash[i]->getStudent()->getGPA() << endl;
       if(hash[i]->getNext() != NULL){
-	cout << "WE HAVE ENTERED THE TWILIGHT ZONE" << endl;
-	cout << "First name: " << hash[i]->getNext()->getStudent()->first << endl;
-	cout << "Last name: " << hash[i]->getNext()->getStudent()->last << endl;
-	cout << "ID: " << hash[i]->getNext()->getStudent()->getId() << endl;
-	cout << "GPA: " << hash[i]->getNext()->getStudent()->getGPA() << endl;
-	    if(hash[i]->getNext()->getNext()!=NULL){
-	      cout << "KLAY THOMPSON IS HITTING THREES THIS IS NOT A DRILL" << endl;
-	      cout << "Name: " << hash[i]->getNext()->getNext()->getStudent()->first << endl;
-	      cout << "Last name: " << hash[i]->getNext()->getNext()->getStudent()->last << endl;
-	      cout << "ID: " << hash[i]->getNext()->getNext()->getStudent()->getId() << endl;
-	      cout << "GPA: " << hash[i]->getNext()->getNext()->getStudent()->getGPA() << endl;
-	    }
+        cout << "WE HAVE ENTERED THE TWILIGHT ZONE" << endl;
+        cout << "First name: " << hash[i]->getNext()->getStudent()->first << endl;
+        cout << "Last name: " << hash[i]->getNext()->getStudent()->last << endl;
+        cout << "ID: " << hash[i]->getNext()->getStudent()->getId() << endl;
+        cout << "GPA: " << hash[i]->getNext()->getStudent()->getGPA() << endl;
+        if(hash[i]->getNext()->getNext()!=NULL){
+          cout << "KLAY THOMPSON IS HITTING THREES THIS IS NOT A DRILL" << endl;
+          cout << "Name: " << hash[i]->getNext()->getNext()->getStudent()->first << endl;
+          cout << "Last name: " << hash[i]->getNext()->getNext()->getStudent()->last << endl;
+          cout << "ID: " << hash[i]->getNext()->getNext()->getStudent()->getId() << endl;
+          cout << "GPA: " << hash[i]->getNext()->getNext()->getStudent()->getGPA() << endl;
+        }
 
       }
 
