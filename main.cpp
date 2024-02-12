@@ -1,11 +1,9 @@
 /*
 Author: Vikram Vasudevan
-Date: 1/3/2024
-Description: This program essentially runs StudentList but using Linked Lists. Each student is linked to a node, and the nodes are linked together sequentially. When a student is added or removed, the node chain is altered to accommodate that change. This program can add students, delete them, print the students, average the GPAs of the students, and end itself.
+Date: 2/12/2024
+Description: This program takes in nodes and stores them in a hash table. It is an extension of the Linked Lists project, except that the students aren't all stored in one linked list, but are rather stored in several smaller ones that are stored in an array. 
 
-Citations: Node.h and Node.cpp files came from Ashvika. Also, I used this website to help me figure out how to print out decimals to 2 places: https://www.geeksforgeeks.org/iomanip-setprecision-function-in-c-with-examples/
-
-
+Citations: Node.h and Node.cpp files came from Ashvika. Also, I used this website to help me figure out how to print out decimals to 2 places: https://www.geeksforgeeks.org/iomanip-setprecision-function-in-c-with-examples/. Additionally, Sophia helped me with conceptualizing how to delete students.
 
 
  */
@@ -22,31 +20,32 @@ Citations: Node.h and Node.cpp files came from Ashvika. Also, I used this websit
 #include <vector>
 using namespace std;
 //function prototypes
-void rehashMechanics(Node* tempNode, Node ** &hash, Node ** & newHash, int index, bool rehash);
+void rehashMechanics(Node* tempNode, Node ** &hash, Node ** & newHash, int index, bool &rehash);
 void add(int Id, float GPA, char first[30], char last[30], int &size, Node** &hash);
 void display(Node ** hash, int &size);
 void remove(Node* &head, Node* current, Node* prev, int deleteID);
-void average(Node* current, int counter, float sum);
-void hashFunction(int &size, int currentsize, Node** &hash);
-void randomize(Node ** &hash, vector<char*> first, vector <char*> last, int &size);
+void hashFunction(int &size, int currentsize, Node** &hash, bool &rehash);
+void randomize(Node ** &hash, vector<char*> first, vector <char*> last, int &size, int numPeople);
 //main
 int main(){
-  vector<Node*> students;
   Node* head = NULL;
   bool stillRunning = true;
 
+  //creating the hash array and starting it with a size of 100.
   Node** hash = new Node* [100];
   int size = 100;
   for(int i = 0; i < 100; i++){
     hash[i] = NULL;
     
   }
+  //creating vectors for the names
   vector<char*> firstNames;
   vector<char*> lastNames;
 
   fstream first_stream;
   fstream second_stream;
 
+  //opening the files
   first_stream.open("first.txt");
   for(int i = 0; i < 20; i++){
     char* temp = new char [15];
@@ -63,35 +62,7 @@ int main(){
     
   }
   
-  for(vector <char*> :: iterator iter = firstNames.begin(); iter != firstNames.end(); iter++){
-    //cout << *iter << endl;
-    
-  }
-  for(vector <char*> :: iterator ite = lastNames.begin(); ite != lastNames.end(); ite++){
-    //cout << *ite << endl;
-
-
-  }
-  /*
-  Node* firstNode = new Node();
-  Node* secondNode = new Node();
-  student* firstStudent = new student();
-  student* secondStudent = new student();
-  firstStudent->setId(1);
-  secondStudent->setId(2);
-  firstNode->setStudent(firstStudent);
-  secondNode->setStudent(secondStudent);
-  firstNode->setNext(secondNode);
-  Node* thirdNode = firstNode->getNext();
-  firstNode->setNext(NULL);
-  cout << secondNode->getStudent()->getId() << endl;
-  cout << thirdNode->getStudent()->getId() << endl;
-  */
-  randomize(hash, firstNames, lastNames, size);
-  cout << "I BEEN STEPH CURRY WITH THE SHOT BEEN COOKING WITH THE SAUCE" << endl;
-  /*
-  display(hash, 100);
-  */
+  randomize(hash, firstNames, lastNames, size, 400);
 //while loop where code runs
   while (stillRunning == true){
     //prompt user to begin one of the functions
@@ -123,7 +94,6 @@ int main(){
       cin >> GPA;
       cin.get();
       //calling the add function
-      int size = 100;
       
       add(id, GPA, first, last, size, hash);
 
@@ -136,18 +106,18 @@ int main(){
       //ending the while loop
       stillRunning = false;
     }
-    if(strcmp(input, "AVERAGE") == 0){
-      //calling the average function
-      average(head, 0, 0);
-    }
     if(strcmp(input, "DELETE") == 0){
       //getting the ID to be deleted.
       cout << "What ID would you like to delete?" << endl;
+
+      //citation sophia
       int deleteID;
       cin >> deleteID;
       cin.get();
+      int index = deleteID % size;
+      
       //calling the delete function
-      remove(head, head, head, deleteID);
+      remove(hash[index], hash[index], hash[index], deleteID);
     }
   }
   return 0;
@@ -155,7 +125,9 @@ int main(){
 
 //add function
 void add(int Id, float GPA, char first[30], char last[30], int &size, Node** &hash){
+
   //creating the new student and setting its values
+  cout << "HI" << endl;
   student* newstudent = new student();
 
   newstudent->setId(Id);
@@ -169,84 +141,46 @@ void add(int Id, float GPA, char first[30], char last[30], int &size, Node** &ha
   
 
   int index = newstudent->getId() % size;
+  cout << "Index: " << index << endl;
 
   if(hash[index] == NULL){
+    cout << "1" << endl;
     hash[index] = tempNode;
   }
   else if(hash[index]->getNext() == NULL){
+    cout << "2" << endl;
     hash[index]->setNext(tempNode);
   }
   else if(hash[index]->getNext()->getNext()==NULL){
+    cout << "3" << endl;
     hash[index]->getNext()->setNext(tempNode);
   }
   else{
+    bool rehash = true;
+    cout << "4" << endl;
     hash[index]->getNext()->getNext()->setNext(tempNode);
-    hashFunction(size, size*2, hash);
-
-  }
-
-  /*
-  if(hash[index]->getNext() == NULL || hash[index] == NULL || hash[index]->getNext()->getNext() == NULL){
-    if(hash[index] == NULL){
-      cout << "t" << endl;
-      hash[index] = tempNode;
-      cout << "e" << endl;
-    }
-    else if(hash[index]->getNext() == NULL){
-      cout << "t" << endl;
-      hash[index]->getNext()->setNext(tempNode);
-      cout << "e" << endl;
-    }
-    else if(hash[index]->getNext()->getNext() == NULL){
-      cout << "t" << endl;
-      hash[index]->getNext()->getNext()->setNext(tempNode);
-      cout << "e" << endl;
+    while(rehash == true){
+      hashFunction(size, size*2, hash, rehash);
     }
 
-    
   }
-  
-  else{
-    hashFunction(size, size*2, hash);
-  }
-  */
 
 
   return;
 }
 
 
-void hashFunction(int &size, int currentsize, Node** &hash){
-  bool rehash = false;
+void hashFunction(int &size, int currentsize, Node** &hash, bool &rehash){
+
+  rehash = false;
   Node** newHash = new Node*[currentsize];
   for(int i = 0; i < currentsize; i++){
     newHash[i] = NULL;
 
   }
 
-/*
-  for(int i = 0;i < size; i++){
-    Node* tempNode = hash[i];
-    int index = tempNode->getStudent()->getId() % currentsize;
-    if(newHash[index] == NULL){
-      newHash[index] = tempNode;
-      newHash[index]->setNext(NULL;)
-    }
-    else{
-      Node* finalNode = newHash[index];
-      while(finalNode != NULL){
-	finalNode->getNext();
-      }
-      finalNode = tempNode;
-      finalNode->setNext(NULL);
-    }
-   
-
-  }
-  */
 
   for(int i = 0; i < size; i++){
-    cout << "I: " << i << endl;
     Node* tempNode = hash[i];
     Node* secondTempNode = NULL;
     Node* thirdTempNode = NULL;
@@ -260,8 +194,6 @@ void hashFunction(int &size, int currentsize, Node** &hash){
         }
       }
     }
-
-    cout << "IDLMAO: " << tempNode->getStudent()->getId() << endl;
     int index;
     if(fourthTempNode != NULL){
       cout << "4" << endl;
@@ -286,29 +218,6 @@ void hashFunction(int &size, int currentsize, Node** &hash){
       index = tempNode->getStudent()->getId() % currentsize;
       rehashMechanics(tempNode, hash, newHash, index, rehash);
     }
-    /*
-    if(tempNode != NULL){
-      index = tempNode->getStudent()->getId() % currentsize;
-      rehashMechanics(tempNode, hash, newHash, index, rehash);
-      if(tempNode->getNext()!= NULL){
-        index = tempNode->getNext()->getStudent()->getId() % currentsize;
-        rehashMechanics(tempNode->getNext(), hash, newHash, index, rehash);
-        if(tempNode->getNext()->getNext() != NULL){ 
-          index = tempNode->getNext()->getNext()->getStudent()->getId() % currentsize;
-          rehashMechanics(tempNode->getNext()->getNext(), hash, newHash, index, rehash);
-          if(tempNode->getNext()->getNext()->getNext() != NULL){
-            index = tempNode->getNext()->getNext()->getNext()->getStudent()->getId() % currentsize;
-            rehashMechanics(tempNode->getNext()->getNext()->getNext(), hash, newHash, index, rehash);
-          }
-          tempNode->getNext()->getNext()->setNext(NULL);
-        }
-        tempNode->getNext()->setNext(NULL);
-        
-
-      }
-      tempNode->setNext(NULL);
-    }
-    */
     
 
   }
@@ -318,7 +227,7 @@ void hashFunction(int &size, int currentsize, Node** &hash){
 
 }
 
-void rehashMechanics(Node* tempNode, Node ** &hash, Node ** & newHash, int index, bool rehash){
+void rehashMechanics(Node* tempNode, Node ** &hash, Node ** & newHash, int index, bool &rehash){
   int iterator = 0;
   if(newHash[index] == NULL){
     newHash[index] = tempNode;
@@ -326,22 +235,25 @@ void rehashMechanics(Node* tempNode, Node ** &hash, Node ** & newHash, int index
   else{
     Node* finalNode = newHash[index];
     while(finalNode->getNext() != NULL){
-      cout << "HI" << endl;
-      cout << finalNode->getStudent()->getId() << endl;
       finalNode = finalNode->getNext();
+      iterator++;
+    }
+    if(iterator == 3){
+      rehash = true;
     }
     finalNode->setNext(tempNode);
     cout << finalNode->getStudent()->getId();
   }
+  tempNode->setNext(NULL);
   cout << tempNode->getStudent()->getId() << " " << index << endl;
 
 
 }
-void randomize(Node ** &hash, vector<char*> first, vector <char*> last, int &size){
+void randomize(Node ** &hash, vector<char*> first, vector <char*> last, int &size, int numPeople){
   srand(time(NULL));
 
   int ID = 100000;
-  for(int i = 0; i < 1000; i++){
+  for(int i = 0; i < numPeople; i++){
     int randNumFirst = rand()%20;
     int randNumSecond = rand()%20;
 
@@ -400,23 +312,19 @@ void remove(Node* &head, Node* current, Node* prev, int deleteID){
 
 //display function
 void display(Node ** hash, int &size){
-  cout << "HI" << endl;
   //if the current node doesn't exist, return.
   for(int i = 0; i < size; i++){
-    cout << "I: " << i << endl;
     if(hash[i] != NULL){
       cout << "First name: " << hash[i]->getStudent()->first << endl;
       cout << "Last name: " << hash[i]->getStudent()->last << endl;
       cout << "ID: " << hash[i]->getStudent()->getId() << endl;
       cout << "GPA: " << hash[i]->getStudent()->getGPA() << endl;
       if(hash[i]->getNext() != NULL){
-        cout << "WE HAVE ENTERED THE TWILIGHT ZONE" << endl;
         cout << "First name: " << hash[i]->getNext()->getStudent()->first << endl;
         cout << "Last name: " << hash[i]->getNext()->getStudent()->last << endl;
         cout << "ID: " << hash[i]->getNext()->getStudent()->getId() << endl;
         cout << "GPA: " << hash[i]->getNext()->getStudent()->getGPA() << endl;
         if(hash[i]->getNext()->getNext()!=NULL){
-          cout << "KLAY THOMPSON IS HITTING THREES THIS IS NOT A DRILL" << endl;
           cout << "Name: " << hash[i]->getNext()->getNext()->getStudent()->first << endl;
           cout << "Last name: " << hash[i]->getNext()->getNext()->getStudent()->last << endl;
           cout << "ID: " << hash[i]->getNext()->getNext()->getStudent()->getId() << endl;
@@ -432,22 +340,3 @@ void display(Node ** hash, int &size){
 
 }
 
-//average function
-void average(Node* current, int counter, float sum){
-  //if you've reached the end of the list, print out the average.
-  if(current == NULL){
-    if(counter == 0){
-      cout << "There are no students in the list" << endl;
-    }
-    else{
-      cout << "The average of all the students' GPAs is " << fixed << setprecision(2) << (sum/counter) << endl;
-    }
-    return;
-  }
-  //add the GPA to the current sum and increment the counter
-  else{
-    counter++;
-    sum = sum + current->getStudent()->getGPA();
-    average(current->getNext(), counter, sum);
-  }
-}
